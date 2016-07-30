@@ -2,10 +2,11 @@ from setuptools import setup
 
 setup(
         name='PyRecs',
-        version=0.1,
+        version=0.11,
         author='Samuel Taylor',
+        author_email='pip@samueltaylor.org',
         url='https://github.com/ssaamm/PyRecs',
-        description='Text-based work habit tracker',
+        description='Recommender systems for Python',
         license='MIT',
         packages=['pyrecs'],
         install_requires=['numpy'],
