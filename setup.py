@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
         name='PyRecs',
-        version=0.01,
+        version=0.1,
         author='Samuel Taylor',
         url='https://github.com/ssaamm/PyRecs',
         description='Text-based work habit tracker',
