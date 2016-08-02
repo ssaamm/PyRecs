@@ -16,18 +16,30 @@ I have only tested on Python 3.5.1
 Usage
 -----
 
-Given a NUM_USERS x NUM_ITEMS matrix of ratings, predict the rating by user 0 of
-item 2 and by user 2 of item 0:
+Predicting ratings based on training data:
 
 .. code:: python
 
-    >>> cf = pyrecs.collab.CollaborativeFiltering()
-    >>> cf.fit([[10,     3.4, np.nan, None],
+    >>> import numpy as np
+    >>> import pyrecs
+    >>> from sklearn.cross_validation import train_test_split
+    >>>
+    >>> data = [[10,     3.4, np.nan, None],
     ...         [10,     0,   10,     5],
     ...         [np.nan, 1.4, 10,     3],
-    ...         [np.nan, 8,   2,      5]])
-    >>> cf.predict([(0, 2), (2, 0)])
-    array([ 10.68567893,   8.31302514])
+    ...         [np.nan, 8,   2,      5]]
+    >>>
+    >>> X, y = pyrecs.collab.matrix_to_dataset(data)
+    >>> X_train, X_test, y_train, y_test = train_test_split(X, y)
+    >>>
+    >>> cf = pyrecs.collab.CollaborativeFiltering()
+    >>> cf.fit(X_train, y_train)
+    >>>
+    >>> cf.predict(X_test)
+    array([ 0.25,  3.4 ,  9.75])
+    >>> y_test
+    [1.4, 10, 8]
+
 
 Tests
 -----
