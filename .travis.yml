@@ -6,5 +6,11 @@ python:
 install:
   - "pip install -r requirements-test.txt"
   - "pip install ."
+  - "pip install coveralls pytest-cov"
 
-script: "py.test tests"
+script:
+  - "py.test tests"
+  - "py.test --cov=pyrecs tests"
+
+after_success:
+  coveralls
