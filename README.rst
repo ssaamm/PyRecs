@@ -2,6 +2,12 @@
 PyRecs
 ======
 
+.. image:: https://api.travis-ci.org/ssaamm/PyRecs.svg?branch=master&service=github
+    :target: https://travis-ci.org/ssaamm/PyRecs?branch=master
+.. image:: https://coveralls.io/repos/github/ssaamm/PyRecs/badge.svg?branch=master
+    :target: https://coveralls.io/github/ssaamm/PyRecs?branch=master
+
+
 A **Py**\ thon **Rec**\ ommender **S**\ ystems library
 
 Installation
