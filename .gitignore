@@ -1,6 +1,9 @@
-*.swp
+.coverage
 
-env/
+*.swp
+.idea/
+
+env*/
 
 *.pyc
 __pycache__

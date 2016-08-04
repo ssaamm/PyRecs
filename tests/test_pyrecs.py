@@ -20,6 +20,7 @@ X, y = ([(0, 0), (0, 1),
 
 @pytest.mark.parametrize('data', [data, list_data])
 def test_cf_predictions(data):
+    X, y = pyrecs.collab.matrix_to_dataset(data)
     cf = pyrecs.collab.CollaborativeFiltering()
 
     cf.fit(X, y)
@@ -28,6 +29,14 @@ def test_cf_predictions(data):
 
     for pos, neg in it.product(positive_preds, negative_preds):
         assert pos > neg
+
+
+def test_sparse_data():
+    X, y = pyrecs.collab.matrix_to_dataset([[10, None],
+                                            [None, 10]])
+    cf = pyrecs.collab.CollaborativeFiltering()
+    cf.fit(X, y)
+    cf.predict([(0, 1), (1, 0)])
 
 
 def test_double_fit():
