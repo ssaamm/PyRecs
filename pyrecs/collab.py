@@ -1,5 +1,6 @@
 from functools import lru_cache
 import numpy as np
+import pandas as pd
 
 _EPSILON = 0.00001
 
@@ -37,6 +38,11 @@ class CollaborativeFiltering(object):
 
     def _predict_user_item(self, user, item):
         """Predicts the score of a given user for a given item"""
+        if not isinstance(user, int):
+            user = self._user_to_ndx[user]
+        if not isinstance(item, int):
+            item = self._item_to_ndx[item]
+
         try:
             rating_mean = self._averages[user]
         except AttributeError:
@@ -58,11 +64,26 @@ class CollaborativeFiltering(object):
         weighted_avg = np.sum(weights * deviations)
         return rating_mean + norm_const * weighted_avg
 
-    def fit(self, X, y, dtype=np.float64):
+    def _fit_dataframe(self, df: pd.DataFrame, dtype):
+        self._user_to_ndx = dict((u, n) for n, u in enumerate(set(df.index)))
+        if len(self._user_to_ndx) != len(df.index):
+            raise ValueError('Non-unique values found in index')
+
+        self._item_to_ndx = dict((i, n) for n, i in enumerate(df.columns))
+
+        self._votes = np.array(df.values, dtype=dtype)
+
+    def fit(self, X, y=None, dtype=np.float64):
         if getattr(self, '_votes', None) is not None:
             raise RuntimeError('Already fit')
 
-        self._votes = dataset_to_matrix(X, y)
+        if type(X) == pd.DataFrame:
+            self._fit_dataframe(X, dtype=dtype)
+        else:
+            if y is None:
+                raise RuntimeError('Must specify target (y)')
+
+            self._votes = dataset_to_matrix(X, y, dtype=dtype)
 
         self._averages = np.zeros(self._votes.shape[0])
         self._users = range(self._votes.shape[0])
@@ -85,14 +106,14 @@ def matrix_to_dataset(matrix):
     return X, y
 
 
-def dataset_to_matrix(X, y, shape=None):
+def dataset_to_matrix(X, y, dtype=None, shape=None):
     X, y = list(X), list(y)
 
     if shape == None:
         shape = (max(r for r, _ in X) + 1,
                  max(c for _, c in X) + 1)
 
-    matrix = np.ones(shape) * np.nan
+    matrix = np.ones(shape, dtype=dtype) * np.nan
 
     for loc, val in zip(X, y):
         if val != None and np.isfinite(val):

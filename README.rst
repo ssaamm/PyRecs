@@ -22,6 +22,29 @@ I have only tested on Python 3.5.1
 Usage
 -----
 
+Loading data from a Pandas DataFrame:
+
+.. code:: python
+
+    >>> import io
+    >>> import pandas as pd
+    >>> from pyrecs import collab
+    >>>
+    >>> df = pd.read_csv(io.StringIO("""
+    ...        ,Torchy's,Tacodeli,In-N-Out,P. Terry's,Casa de Luz,Koriente
+    ... Sam,           5,        ,       4,         4,          3,       1
+    ... Matthew,        ,       2,       1,          ,          5,       5
+    ... Sarah,         5,       4,       2,         2,          5,       5
+    ... Hannah,         ,        ,       1,         1,          5,
+    ... """.replace(' ', '')), index_col=0)
+    >>>
+    >>> cf = collab.CollaborativeFiltering()
+    >>> cf.fit(df)
+    >>> print(cf.predict([('Sam', 'Tacodeli'), ('Hannah', 'Koriente')]))
+    [ 3.41666667  5.76851363]
+
+
+
 Predicting ratings based on training data:
 
 .. code:: python

@@ -1,7 +1,11 @@
 import itertools as it
 import numpy as np
+import pandas as pd
 import pyrecs
 import pytest
+import os
+
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 list_data = [[10,     3.4, np.nan, None],
              [10,     0,   10,     5],
@@ -45,6 +49,12 @@ def test_double_fit():
 
     with pytest.raises(RuntimeError):
         cf.fit(X, y)
+
+
+def test_fit_without_target():
+    cf = pyrecs.collab.CollaborativeFiltering()
+    with pytest.raises(RuntimeError):
+        cf.fit(X)
 
 
 def test_predict_before_fit():
@@ -93,3 +103,25 @@ def test_dataset_to_matrix():
         for v_test, v_expect in zip(r_test, r_expect):
             assert ((np.isnan(v_test) and np.isnan(v_expect))
                     or v_test == v_expect)
+
+
+def test_index_mapping():
+    prefs = os.path.join(BASE_DIR, 'data/restaurant_preferences.csv')
+    df = pd.read_csv(prefs, index_col=0)
+
+    print(df)
+
+    cf = pyrecs.collab.CollaborativeFiltering()
+    cf.fit(df)
+
+    predictions = cf.predict([('Sam', 'Tacodeli')])
+    assert predictions[0] > 2.5
+
+
+def test_index_nonunique_index_vals():
+    prefs = os.path.join(BASE_DIR, 'data/nonunique_rows.csv')
+    df = pd.read_csv(prefs, index_col=0)
+
+    cf = pyrecs.collab.CollaborativeFiltering()
+    with pytest.raises(ValueError):
+        cf.fit(df)
