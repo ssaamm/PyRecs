@@ -72,5 +72,4 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   Getting started <index>
    API documentation <pyrecs>
