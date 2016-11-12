@@ -1,9 +1,11 @@
 import itertools as it
+import os
+
 import numpy as np
 import pandas as pd
-import pyrecs
 import pytest
-import os
+
+import pyrecs
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
@@ -24,7 +26,7 @@ X, y = ([(0, 0), (0, 1),
 
 @pytest.mark.parametrize('data', [data, list_data])
 def test_cf_predictions(data):
-    X, y = pyrecs.collab.matrix_to_dataset(data)
+    X, y = pyrecs.util.matrix_to_dataset(data)
     cf = pyrecs.collab.CollaborativeFiltering()
 
     cf.fit(X, y)
@@ -36,7 +38,7 @@ def test_cf_predictions(data):
 
 
 def test_sparse_data():
-    X, y = pyrecs.collab.matrix_to_dataset([[10, None],
+    X, y = pyrecs.util.matrix_to_dataset([[10, None],
                                             [None, 10]])
     cf = pyrecs.collab.CollaborativeFiltering()
     cf.fit(X, y)
@@ -81,7 +83,7 @@ def test_predict_out_of_range():
 
 @pytest.mark.parametrize('data', [data, list_data])
 def test_rating_matrix_to_dataset(data):
-    X, y = pyrecs.collab.matrix_to_dataset(data)
+    X, y = pyrecs.util.matrix_to_dataset(data)
 
     expected_tuples = [(0, 0, 10), (0, 1, 3.4),
                        (1, 0, 10), (1, 1, 0), (1, 2, 10), (1, 3, 5),
@@ -99,7 +101,6 @@ def test_dataset_to_matrix():
     matrix = pyrecs.collab.dataset_to_matrix(X, y)
 
     for r_test, r_expect in zip(matrix, data):
-        print(r_test, r_expect)
         for v_test, v_expect in zip(r_test, r_expect):
             assert ((np.isnan(v_test) and np.isnan(v_expect))
                     or v_test == v_expect)
@@ -108,8 +109,6 @@ def test_dataset_to_matrix():
 def test_index_mapping():
     prefs = os.path.join(BASE_DIR, 'data/restaurant_preferences.csv')
     df = pd.read_csv(prefs, index_col=0)
-
-    print(df)
 
     cf = pyrecs.collab.CollaborativeFiltering()
     cf.fit(df)
