@@ -68,10 +68,10 @@ class CollaborativeFiltering(object):
         return rating_mean + norm_const * weighted_avg
 
     def _fit_dataframe(self, df: pd.DataFrame, dtype):
-        self._user_to_ndx = dict((u, n) for n, u in enumerate(set(df.index)))
-        if len(self._user_to_ndx) != len(df.index):
+        if len(df.index) != len(set(df.index)):
             raise ValueError('Non-unique values found in index')
 
+        self._user_to_ndx = dict((u, n) for n, u in enumerate(df.index))
         self._item_to_ndx = dict((i, n) for n, i in enumerate(df.columns))
 
         self._votes = np.array(df.values, dtype=dtype)
